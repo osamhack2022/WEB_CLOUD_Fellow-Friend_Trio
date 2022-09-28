@@ -23,8 +23,8 @@ jobs:
           cache-dependency-path: "./WEB(BE)/yarn.lock"
       - name: Yarn install
         run: yarn install
-        working-directory: "./WEB(BE)"
+        working-directory: "./WEB(BE)/"
 
       - name: Yarn Test
         run: yarn test
-        working-directory: "./WEB(BE)"
+        working-directory: "./WEB(BE)/"
