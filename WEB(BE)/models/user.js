@@ -1,7 +1,7 @@
 const monogoose = require('monogoose')
 const bcrypt = require('bcrypt')
 const saltRounds = 12
-const jsonwebtoken = require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 const UserSchema = monogoose.Schema({
   name: {
     type: String,
@@ -22,7 +22,8 @@ const UserSchema = monogoose.Schema({
   },
 })
 
-UserSchema.pre('save', (next) => {
+UserSchema.pre('save', function (next) {
+  let user = this
   if (user.isModified('password')) {
     // 암호화 진행
     bcrypt.genSalt(saltRounds, () => (err, salt) => {
