@@ -43,7 +43,7 @@
 
 ```bash
 $ git clone git주소
-$ yarn add
+$ yarn install
 $ yarn start or yarn run start
 ```
 
