@@ -1,9 +1,14 @@
-const monogoose = require('monogoose')
+const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const saltRounds = 12
 const jwt = require('jsonwebtoken')
-const UserSchema = monogoose.Schema({
+const userSchema = mongoose.Schema({
   name: {
+    type: String,
+    maxlength: 20,
+    required: true,
+  },
+  id: {
     type: String,
     maxlength: 20,
     required: true,
@@ -16,13 +21,13 @@ const UserSchema = monogoose.Schema({
   token: {
     type: String,
   },
-  alias: {
+  nickname: {
     type: String,
     required: true,
   },
 })
 
-UserSchema.pre('save', function (next) {
+userSchema.pre('save', function (next) {
   let user = this
   if (user.isModified('password')) {
     // 암호화 진행
@@ -40,7 +45,7 @@ UserSchema.pre('save', function (next) {
 })
 
 /** 비밀번호 일치 확인 */
-userSchema.methods.comparePassword = (plainPassword, cb) => {
+userSchema.methods.comparePassword = function (plainPassword, cb) {
   bcrypt.compare(plainPassword, this.password, function (err, isMatch) {
     if (err) return cb(err)
     cb(null, isMatch)
@@ -74,6 +79,6 @@ userSchema.statics.findByToken = function (token, cb) {
   })
 }
 
-const User = mongoose.model('Usersecond', userSchema)
+const User = mongoose.model('User', userSchema)
 
 module.exports = { User }
