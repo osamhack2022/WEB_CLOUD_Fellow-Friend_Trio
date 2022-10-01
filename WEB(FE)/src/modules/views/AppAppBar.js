@@ -4,6 +4,8 @@ import Link from '@mui/material/Link';
 import AppBar from '../components/AppBar';
 import Toolbar from '../components/Toolbar';
 
+// index 페이지 최상단 3개의 링크 항목을 다룸 
+
 const rightLink = {
   fontSize: 16,
   color: 'common.white',
@@ -20,28 +22,28 @@ function AppAppBar() {
             variant="h6"
             underline="none"
             color="inherit"
-            href="/premium-themes/onepirate/"
+            href="/"
             sx={{ fontSize: 24 }}
           >
-            {'onepirate'}
+            {'또래 친구들'}
           </Link>
           <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
             <Link
               color="inherit"
               variant="h6"
               underline="none"
-              href="/premium-themes/onepirate/sign-in/"
+              href="/login"
               sx={rightLink}
             >
-              {'Sign In'}
+              {'로그인'}
             </Link>
             <Link
               variant="h6"
               underline="none"
-              href="/premium-themes/onepirate/sign-up/"
+              href="/register"
               sx={{ ...rightLink, color: 'secondary.main' }}
             >
-              {'Sign Up'}
+              {'회원가입'}
             </Link>
           </Box>
         </Toolbar>
