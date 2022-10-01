@@ -1,6 +1,10 @@
-# 또래 친구들(FELLOW-FRIEND)
 
-<a href="https://imgbb.com/"><img src="https://i.ibb.co/F6CBBLG/Free-Sample-By-Wix.jpg" alt="Free-Sample-By-Wix" border="0"></a>
+
+# 또래 친구들(FELLOW-FRIEND)
+<p align="center">
+<a href="https://imgbb.com/"><img 
+width="200" height="200" src="https://i.ibb.co/F6CBBLG/Free-Sample-By-Wix.jpg" alt="Free-Sample-By-Wix" border="0"></a>
+</p>
 
 ## 프로젝트 소개
 
