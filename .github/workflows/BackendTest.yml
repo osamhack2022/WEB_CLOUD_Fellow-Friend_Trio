@@ -6,9 +6,6 @@ name: Node.js CI
 on:
   push:
     branches: ["develop"]
-  pull_request:
-    branches: ["main"]
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,6 +22,7 @@ jobs:
         run: yarn install
         working-directory: "./WEB(BE)/"
 
+      # .env 파일 포함하여 실행시키자 그게 나을듯 싶다
       - name: Yarn Test
         run: yarn test
         working-directory: "./WEB(BE)/"
