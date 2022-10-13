@@ -1,20 +1,43 @@
 import React from 'react'
-import MuiTypography from '@mui/material/Typography'
+import { Container, Grid, Link, Typography } from '@mui/material'
+import { useLocation } from 'react-router-dom'
 function SignIn() {
+  const {state} = useLocation()
+  console.log(state)
   return (
-    <div>
-      <React.Fragment>
-        <MuiTypography variant="h3" gutterBottom marked="center" align="center">
-          로그인
-        </MuiTypography>
-        <MuiTypography variant="body2" align="center">
-          {'회원가입을 하고 싶다면,   '}
-          <Link href="register" align="center" underline="always">
-            여기를 눌러 가입하세요!
-          </Link>
-        </MuiTypography>
-      </React.Fragment>
-    </div>
+    <Grid
+      sx={{
+        width: '99vw',
+        height: '98vh',
+        background: '#363740',
+        display: 'flex',
+      }}
+    >
+      <Container
+        maxWidth="sm"
+        fixed
+        sx={{
+          background: 'white',
+          // postion: 'absolute',
+
+          // height: '75vh',
+          // width: '55vw',
+          // alignItems: 'center',
+          // justifyContent: 'center',
+          borderRadius: '5%',
+          display: 'grid',
+          gridTemplateColumns: '200px 200px 500px',
+          gridTemplateRows: '200px 200px 500px',
+        }}
+      >
+        <div>Fellow-Friend</div>
+        <div>로그인</div>
+        <div>군번 과 패스워드를 입력해주세요.</div>
+        <div>
+          군번
+        </div>
+      </Container>
+    </Grid>
   )
 }
 
