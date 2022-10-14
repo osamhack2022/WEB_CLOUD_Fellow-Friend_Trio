@@ -1,12 +1,15 @@
 const app = require('express')()
+const session = require('express-session')
 const http = require('http')
+const cors = require('cors')
 const server = http.createServer(app)
 // const { Server } = require('socket.io')
 const mongoose = require('mongoose')
+const MongoStore = require('connect-mongo')
 const bodyParser = require('body-parser')
 // const config = require('./src/config/key')
 const config = require('./src/config/key.js')
-const mongodb = mongoose
+mongoose
   .connect(config.MONGO_DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -30,6 +33,27 @@ const chatRouter = require('./src/routes/chat')
 app.get('/', (req, res) => {
   res.send('Default Pages')
 })
+
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+)
+app.use(
+  session({
+    name: 'armynumber',
+    secret: process.env.SECRET_TOKEN,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_DB,
+      collectionName: 'sessions',
+      saveUninitialized: false,
+    }),
+    cookie: { maxAge: 3.6e6 * 24 },
+  })
+)
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
