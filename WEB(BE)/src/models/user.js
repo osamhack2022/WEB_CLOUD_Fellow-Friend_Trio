@@ -8,25 +8,31 @@ const userSchema = mongoose.Schema(
       maxlength: 20,
       required: true,
     },
-    id: {
-      type: String,
-      maxlength: 20,
-      unique: true,
-      required: true,
-    },
     password: {
       type: String,
       minlength: 5,
       required: true,
     },
-    hashPassword: String,
-    token: String,
+    hashpassword: String,
     nickname: {
       type: String,
       unique: true,
       required: true,
     },
     questions: {
+      type: String,
+      required: true,
+    },
+    armyunit: {
+      type: String,
+      required: true,
+    },
+    armynumber: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    militaryrank: {
       type: String,
       required: true,
     },
