@@ -7,8 +7,8 @@ const bcrypt = require('bcrypt')
 
 // 유저 1명 검색 GET 요청
 router.get('/oneFindUser', (req, res, next) => {
-  const id = req.body.id
-  User.findOne({ id }, (err, docs) => {
+  const armynumber = req.body.armynumber
+  User.findOne({ armynumber }, (err, docs) => {
     if (err) {
       res.status(500).json({
         message: '요청한 회원이 없습니다.',
@@ -18,7 +18,7 @@ router.get('/oneFindUser', (req, res, next) => {
       console.log(docs)
       res.status(200).json({
         message: `회원 정보는 ${docs.name} 입니다.`,
-        id: `${docs.id}`,
+        armynumber: `${docs.armynumber}`,
         name: `${docs.name}`,
         nickname: `${docs.nickname}`,
       })
@@ -38,7 +38,7 @@ router.get('/oneFindUser', (req, res, next) => {
 
 /**  // 요청된 군번 db에서 찾는다. 요청된 군번이 db에 있다면 비밀번호 일치여부 확인. 일치 시, 토큰 생성. 생성한 토큰을 쿠키에 저장한다 */
 router.post('/login', (req, res) => {
-  User.findOne({ id: req.body.id }, (err, user) => {
+  User.findOne({ armynumber: req.body.armynumber }, (err, user) => {
     if (!user) {
       return res.json({
         loginSuccess: false,
@@ -49,29 +49,51 @@ router.post('/login', (req, res) => {
     user.comparePassword(req.body.password, (err, isMatch) => {
       console.log(isMatch)
       if (!isMatch) {
-        return res.json({
+        res.json({
           loginSuccess: false,
           message: '비밀번호가 틀렸습니다.',
         })
       }
       //비밀번호 까지 맞다면 토큰을 생성하기
-      user.generateToken((err, user) => {
+      else {
         if (err) return res.status(400).send(err)
-
-        //token을 저장한다. 어디에? -> 쿠키, 로컬스토리지 둘중 하나를 쓸예정.
-        // 일단은 쿠키로 저장
-        res
-          .cookie('x_auth', user.token)
-          .status(200)
-          .json({ loginSuccess: true, userId: user._id, name: user.name })
-      })
+        req.session.user = {
+          army_number: req.body.armynumber,
+          nickname: req.body.nickname,
+        }
+        res.status(200).json({
+          loginSuccess: true,
+          army_number: user.armynumber,
+          name: user.name,
+        })
+      }
     })
   })
 })
 
+/** 로그아웃 */
+// postman 으로 확인 못함 (session 값이 있어야함)
+router.get('/logout', async function (req, res, next) {
+  const session = req.session
+  try {
+    if (session.user) {
+      //세션정보가 존재하는 경우
+      await req.session.destroy(function (err) {
+        if (err) console.log(err)
+        else {
+          res.redirect('/')
+        }
+      })
+    }
+  } catch (e) {
+    res.redirect('/')
+    console.log(e)
+  }
+})
+
 /** 유저 삭제 */
 router.delete('/userDelete', (req, res) => {
-  User.findOneAndDelete({ id: req.body.id }, (err, results) => {
+  User.findOneAndDelete({ armynumber: req.body.armynumber }, (err, results) => {
     if (err) {
       res.status(500).json({
         userDelete: false,
@@ -79,17 +101,37 @@ router.delete('/userDelete', (req, res) => {
       })
       throw err
     } else {
-      res.status(200).json({
-        userDelete: true,
-        message: '유저 정보가 삭제되었습니다.',
-      })
+      const session = req.session
+      if(session) {
+        req.session.destroy(function (err) {
+          if (err) console.log(err)
+          else {
+            res.status(200).json({
+              userDelete: true,
+              message: '유저 정보가 삭제되었습니다.',
+            })
+          }
+        })
+      } else {
+        res.status(404).json({
+          message: "session이 없습니다."
+        })
+      }
     }
   })
 })
 
 /** 유저 생성 */
 router.post('/register', async (req, res) => {
-  const { name, id, password, nickname, questions } = req.body
+  const {
+    name,
+    armynumber,
+    password,
+    nickname,
+    questions,
+    armyunit,
+    militaryrank,
+  } = req.body
   const salt = await bcrypt.genSalt(10)
   const hashPassword = await bcrypt.hash(password, salt)
 
@@ -105,14 +147,19 @@ router.post('/register', async (req, res) => {
     const user = new User({
       nickname,
       name,
-      id,
+      armynumber,
       password,
       questions,
       hashPassword,
+      armyunit,
+      militaryrank,
     })
 
     // password를 암호화 하기
-
+    req.session.user = {
+      army_number: req.body.armynumber,
+      nickname: req.body.nickname,
+    }
     await user.save() // db에 user 저장
 
     res.status(200).json({
