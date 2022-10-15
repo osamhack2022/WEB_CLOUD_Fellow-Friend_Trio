@@ -60,6 +60,7 @@ router.post('/login', (req, res) => {
         req.session.user = {
           army_number: req.body.armynumber,
           nickname: req.body.nickname,
+          role: req.body.role,
         }
         res.status(200).json({
           loginSuccess: true,
@@ -102,7 +103,7 @@ router.delete('/userDelete', (req, res) => {
       throw err
     } else {
       const session = req.session
-      if(session) {
+      if (session) {
         req.session.destroy(function (err) {
           if (err) console.log(err)
           else {
@@ -114,7 +115,7 @@ router.delete('/userDelete', (req, res) => {
         })
       } else {
         res.status(404).json({
-          message: "session이 없습니다."
+          message: 'session이 없습니다.',
         })
       }
     }
@@ -130,6 +131,7 @@ router.post('/register', async (req, res) => {
     nickname,
     questions,
     armyunit,
+    role,
     militaryrank,
   } = req.body
   const salt = await bcrypt.genSalt(10)
@@ -153,12 +155,14 @@ router.post('/register', async (req, res) => {
       hashPassword,
       armyunit,
       militaryrank,
+      role,
     })
 
     // password를 암호화 하기
     req.session.user = {
       army_number: req.body.armynumber,
       nickname: req.body.nickname,
+      role: req.body.role,
     }
     await user.save() // db에 user 저장
 
@@ -177,18 +181,31 @@ router.post('/register', async (req, res) => {
 
 /** 유저 정보 변경 */
 router.patch('/update', (req, res) => {
-  const { id, password, nickname, name, questions } = req.body
-  User.updateOne({ nickname }, { id, password, nickname, name, questions })
+  const {
+    armynumber,
+    password,
+    nickname,
+    name,
+    questions,
+    militaryrank,
+    armyunit,
+  } = req.body
+  User.updateOne(
+    { armynumber },
+    { armynumber, password, nickname, name, questions, militaryrank, armyunit },
+  )
     .then((result) => {
+      console.log(result)
       res.status(200).json({
         message: '유저 정보가 업데이트 되었습니다.',
-        id: result.id,
+        armynumber: result.armynumber,
       })
     })
     .catch((err) => {
       res.status(500).json({
         message: '유저 정보 업데이트에 실패하였습니다.',
       })
+      throw err
     })
 })
 

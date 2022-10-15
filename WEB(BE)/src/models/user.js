@@ -23,6 +23,10 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      required: true,
+    },
     armyunit: {
       type: String,
       required: true,
@@ -37,7 +41,7 @@ const userSchema = mongoose.Schema(
       required: true,
     },
   },
-  { versionKey: false }
+  { versionKey: false },
 )
 
 // userSchema.pre('save', function (next) {
